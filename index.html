@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="NarrowItDownApp">
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="./styles/bootstrap.min.css">
@@ -17,7 +17,7 @@
               Narrow Down Your Chinese Menu Choice
             </div>
             <div class="card-body">
-              <div class="row">
+              <div class="row" ng-controller="NarrowItDownController as syntax">
 
                 <div class="col-md-9">
                   <div class="form-group">
@@ -27,20 +27,39 @@
 
                 <div class="col-md-3">
                   <div class="form-group narrow-button">
-                    <button class="btn btn-primary">Search</button>
+                    <button class="btn btn-primary" ng-click="syntax.searchFunction(searchItem);">Narrow It Down For Me!</button>
                   </div>
                 </div>
-              </div>
-             
-              <div class="container">
-                <div class="loader"></div>
-              </div>
 
+                <div class="col">
+
+                  <div class="alert alert-danger" role="alert" ng-if="syntax.invalid">
+                    Error!!! Please search for something....
+                  </div>
+
+                  <div class="container" ng-if="syntax.loader">
+                    <div class="loader"></div>
+                  </div>
+
+                  <table class="table table-hover" ng-if="syntax.table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Remove</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Directive Goes Here -->
+                    </tbody>
+                  </table>
+                </div>
+  
+              </div> <!-- end of controller -->
             </div>
           </div>
         </div>
       </div>
-      
     </div>
   </body>
 </html>
