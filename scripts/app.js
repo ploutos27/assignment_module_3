@@ -11,34 +11,33 @@
       templateUrl: '../foundItems.html',
       scope: {
         onRemove: '&',
-        foundItems: '<'
+        found: '<'
       },
-      controller: FoundItemsDirectiveController,
-      controllerAs: 'syntax',
+      controller: Controller1,
+      controllerAs: 'list',
       bindToController: true
     };
-
     return ddo;
   }
 
-  function FoundItemsDirectiveController() {
-    var list = this;
-
-  }
-
   Controller1.$inject = ['MenuSearchService', '$http', 'ApiBasePath'];
-
   function Controller1(MenuSearchService) {
     var syntax = this;
-    syntax.loader = false;
-    syntax.table = false;
 
-    syntax.searchFunction = function (val) {
-      if (val === undefined || val.trim() === '') { // check if value is whitespace or undefined
-        syntax.invalid = true;
+    syntax.searchMethod = function (val) {
+      if (val === undefined) {
+        console.error('Error. Please search for something...');
       } else {
-        syntax.invalid = false;
-        MenuSearchService.getMatchedMenuItems(val.trim()); // call the getMatchedMenuItems Service and pass the user val
+          MenuSearchService.getMatchedMenuItems(val.trim())
+            .then(function(res) {
+              syntax.found = res;
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+          syntax.removeItem = function(index) {
+            syntax.found.splice(index, 1);
+          }
       }
     }
 
@@ -46,31 +45,23 @@
 
   function menuSearchServices($http, ApiBasePath) {
     var service = this;
-
-    service.getMatchedMenuItems = function (searchTerm) {
-      service.foundItems = service.callServer(searchTerm);
-      console.log(service.foundItems);
-    }
-
-    service.callServer = function (searchTerm) {
-      return $http({
-        method: "GET",
-        url: (ApiBasePath + "/menu_items.json")
-      }).then(function (result) {
-        var foundItems = result.data.menu_items;
-        var found = [];
-        for (let i = 0; i < foundItems.length; i++) {
-          if (foundItems[i].description.toLowerCase().indexOf(searchTerm) !== -1) {
-            found.push(foundItems[i]);
-          }
-        }
-        return found;
-      }).catch(function (error) {
-        console.log(error);
-      });
-    }
-  
+      service.getMatchedMenuItems = function (searchTerm) {
+        return $http({
+          method: "GET",
+          url: (ApiBasePath + "/menu_items.json")
+        })
+        .then(function (result) {
+          var foundItems = result.data.menu_items, found = [];
+            for (let i = 0; i < foundItems.length; i++) {
+              if (foundItems[i].description.toLowerCase().indexOf(searchTerm) !== -1) {
+                found.push(foundItems[i]);
+              }
+            }
+          return found;
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      }
   }
-
-
 })();
