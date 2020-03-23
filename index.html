@@ -32,11 +32,12 @@
                 </div>
 
                 <div class="col-md-12">
+                  <div class="loader" ng-if="syntax.loader"></div>
                   <found-items 
                       found="syntax"
-                      on-remove="syntax.removeItem(index)"></found-items>
+                      on-remove="syntax.removeItem(index)">
+                  </found-items>
                 </div>
-  
               </div> 
             </div>
           </div>

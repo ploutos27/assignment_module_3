@@ -8,7 +8,7 @@
 
   function FoundItemsDirective() {
     var ddo = {
-      templateUrl: '../foundItems.html',
+      templateUrl: './foundItems.html',
       scope: {
         onRemove: '&',
         found: '<'
@@ -23,17 +23,22 @@
   Controller1.$inject = ['MenuSearchService', '$http', 'ApiBasePath'];
   function Controller1(MenuSearchService) {
     var syntax = this;
+        syntax.loader = false;
 
     syntax.searchMethod = function (val) {
+      syntax.loader = true;
       if (val === undefined) {
         console.error('Error. Please search for something...');
+        syntax.loader = false;
       } else {
           MenuSearchService.getMatchedMenuItems(val.trim())
             .then(function(res) {
               syntax.found = res;
+              syntax.loader = false;
             })
             .catch(function (error) {
               console.log(error);
+              syntax.loader = false;
             });
           syntax.removeItem = function(index) {
             syntax.found.splice(index, 1);
